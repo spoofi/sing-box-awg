@@ -1,10 +1,12 @@
 NAME = sing-box
 COMMIT = $(shell git rev-parse --short HEAD)
-TAGS ?= $(shell cat release/DEFAULT_BUILD_TAGS_OTHERS)
+TAGS ?= $(shell cat release/DEFAULT_BUILD_TAGS_OTHERS),with_awg
 
 GOHOSTOS = $(shell go env GOHOSTOS)
 GOHOSTARCH = $(shell go env GOHOSTARCH)
-VERSION=$(shell CGO_ENABLED=0 GOOS=$(GOHOSTOS) GOARCH=$(GOHOSTARCH) go run github.com/sagernet/sing-box/cmd/internal/read_tag@latest)
+# Get version: use AWG tag if present, otherwise upstream tag + awg2.0 suffix
+NEAREST_TAG = $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+VERSION = $(patsubst v%,%,$(NEAREST_TAG))$(if $(findstring -awg,$(NEAREST_TAG)),,-awg2.0)
 
 LDFLAGS_SHARED = $(shell cat release/LDFLAGS)
 PARAMS = -v -trimpath -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=$(VERSION)' $(LDFLAGS_SHARED) -s -w -buildid="
@@ -271,6 +273,50 @@ update:
 	git fetch
 	git reset FETCH_HEAD --hard
 	git clean -fdx
+
+# =============================================================================
+# Vendor Build with Patches
+# =============================================================================
+# Use this to build with patched dependencies (e.g., <c> counter tag in AWG)
+
+.PHONY: vendor patch-deps build-patched clean-vendor
+
+# Create vendor directory with all dependencies
+vendor:
+	@echo "Creating vendor directory..."
+	go mod vendor
+	@echo "Vendor directory created"
+
+# Apply patches to vendored dependencies
+patch-deps: vendor
+	@echo "Applying dependency patches..."
+	@./patches/amneziawg-go/apply.sh
+	@echo "All patches applied"
+
+# Build with vendored (and patched) dependencies
+build-patched: patch-deps
+	@echo "Building with patched dependencies..."
+	export GOTOOLCHAIN=local && \
+	go build -mod=vendor $(MAIN_PARAMS) $(MAIN)
+	@echo "Build complete"
+
+# Clean vendor directory
+clean-vendor:
+	rm -rf vendor
+	@echo "Vendor directory removed"
+
+# Show patching help
+patch-help:
+	@echo "Vendor/Patch Commands:"
+	@echo ""
+	@echo "  make vendor        - Create vendor directory"
+	@echo "  make patch-deps    - Apply patches to vendor"
+	@echo "  make build-patched - Build with patched dependencies"
+	@echo "  make clean-vendor  - Remove vendor directory"
+	@echo ""
+	@echo "Patches applied:"
+	@echo "  - amneziawg-go: <c> packet counter tag"
+	@echo ""
 
 %:
 	@:

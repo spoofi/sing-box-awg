@@ -102,6 +102,8 @@ jobs:
             LABEL="conflicts"
             BODY="Upstream release [$TAG](https://github.com/${{ env.UPSTREAM_REPO }}/releases/tag/$TAG) — **merge conflicts detected**, manual resolution required."
           fi
+          gh label create "auto-merge" --color "09ff16" --description "Safe to merge automatically" --force
+          gh label create "conflicts" --color "7f6151" --description "Has merge conflicts" --force
           gh pr create \
             --title "Sync upstream: $TAG" \
             --body "$BODY" \

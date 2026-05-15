@@ -11,7 +11,6 @@ env:
 permissions:
   contents: write
   pull-requests: write
-  actions: write
 
 jobs:
   sync:
@@ -78,6 +77,8 @@ jobs:
 
       - name: Push branch
         if: steps.idempotency.outputs.skip == 'false' && steps.check.outputs.status != 'up-to-date'
+        env:
+          TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
         run: |
           TAG="${{ steps.release.outputs.tag }}"
           if [ "${{ steps.check.outputs.status }}" = "clean" ]; then
@@ -85,6 +86,7 @@ jobs:
           else
             TARGET_BRANCH="upstream/${TAG}-conflict"
           fi
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
           git push origin "upstream/$TAG":"$TARGET_BRANCH"
 
       - name: Create Pull Request

@@ -89,7 +89,7 @@ jobs:
           mkdir -p dist
           EXT=""
           if [ "${{ matrix.goos }}" = "windows" ]; then EXT=".exe"; fi
-          go build -v -trimpath -o "dist/${OUTPUT_NAME}${EXT}" \
+          go build -v -trimpath -o "dist/sing-box${EXT}" \
             -tags "${BUILD_TAGS}" \
             -ldflags "-s -w -buildid= ${LDFLAGS_SHARED} -X github.com/sagernet/sing-box/constant.Version=${{ inputs.version }}-awg2.0" \
             ./cmd/sing-box
@@ -116,13 +116,13 @@ jobs:
           mkdir -p "${OUTPUT_NAME}"
           cp ../LICENSE "${OUTPUT_NAME}/"
           if [ "${{ matrix.goos }}" = "windows" ]; then
-            cp "${OUTPUT_NAME}.exe" "${OUTPUT_NAME}/sing-box.exe"
+            cp sing-box.exe "${OUTPUT_NAME}/sing-box.exe"
             if [ -f libcronet.dll ]; then
               cp libcronet.dll "${OUTPUT_NAME}/"
             fi
             zip -r "${OUTPUT_NAME}.zip" "${OUTPUT_NAME}"
           else
-            cp "${OUTPUT_NAME}" "${OUTPUT_NAME}/sing-box"
+            cp sing-box "${OUTPUT_NAME}/sing-box"
             if [ -f libcronet.so ]; then
               cp libcronet.so "${OUTPUT_NAME}/"
             fi
@@ -134,7 +134,7 @@ jobs:
         run: |
           EXT=""
           if [ "${{ matrix.goos }}" = "windows" ]; then EXT=".exe"; fi
-          rm -f "dist/${OUTPUT_NAME}${EXT}" dist/libcronet.so dist/libcronet.dll
+          rm -f "dist/sing-box${EXT}" dist/libcronet.so dist/libcronet.dll
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

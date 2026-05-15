@@ -1,16 +1,17 @@
 name: Sync Upstream Release
 on:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: "0 */12 * * *"
   workflow_dispatch:
 
 env:
-  UPSTREAM_REPO: 'SagerNet/sing-box'
-  BASE_BRANCH: 'main'
+  UPSTREAM_REPO: "SagerNet/sing-box"
+  BASE_BRANCH: "main"
 
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 jobs:
   sync:

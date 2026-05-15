@@ -69,6 +69,10 @@ jobs:
           else
             TAGS=$(cat release/DEFAULT_BUILD_TAGS)
           fi
+          # CGO_ENABLED=0: use pure-go naive implementation instead of cronet CGO bindings
+          if [ "${{ matrix.naive }}" = "true" ] && [ "${{ matrix.goos }}" != "windows" ]; then
+            TAGS="${TAGS},with_purego"
+          fi
           TAGS="${TAGS},with_awg"
           echo "BUILD_TAGS=${TAGS}" >> "${GITHUB_ENV}"
 

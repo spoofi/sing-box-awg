@@ -35,6 +35,7 @@ const (
 	TypeHysteriaRealm      = "hysteria-realm"
 	TypeACME               = "acme"
 	TypeCloudflareOriginCA = "cloudflare-origin-ca"
+  TypeAwg                = "awg"
 )
 
 const (
@@ -98,6 +99,8 @@ func ProxyDisplayName(proxyType string) string {
 		return "Selector"
 	case TypeURLTest:
 		return "URLTest"
+	case TypeAwg:
+		return "Awg"
 	default:
 		return "Unknown"
 	}

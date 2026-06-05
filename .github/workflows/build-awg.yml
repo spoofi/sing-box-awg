@@ -1,0 +1,195 @@
+name: Build AWG
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (e.g., 1.13.0-alpha.36)"
+        required: true
+        type: string
+      prerelease:
+        description: "Mark as pre-release"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: linux-amd64
+            goos: linux
+            goarch: amd64
+            naive: true
+          - name: entware-mipsel
+            goos: linux
+            goarch: mipsle
+            gomips: softfloat
+            naive: false
+          - name: entware-aarch64
+            goos: linux
+            goarch: arm64
+            naive: true
+          - name: windows-amd64
+            goos: windows
+            goarch: amd64
+            naive: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ~1.25.9
+
+      - name: Vendor dependencies and apply patches
+        run: |
+          set -xeuo pipefail
+          go mod vendor
+          if [ -x "./patches/amneziawg-go/apply.sh" ]; then
+            echo "Applying AWG patches..."
+            ./patches/amneziawg-go/apply.sh
+          else
+            echo "No patches to apply"
+          fi
+
+      - name: Set build tags
+        run: |
+          set -xeuo pipefail
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            TAGS=$(cat release/DEFAULT_BUILD_TAGS_WINDOWS)
+          elif [ "${{ matrix.naive }}" != "true" ]; then
+            TAGS=$(cat release/DEFAULT_BUILD_TAGS_OTHERS)
+          else
+            TAGS=$(cat release/DEFAULT_BUILD_TAGS)
+          fi
+          # CGO_ENABLED=0: use pure-go naive implementation instead of cronet CGO bindings
+          if [ "${{ matrix.naive }}" = "true" ] && [ "${{ matrix.goos }}" != "windows" ]; then
+            TAGS="${TAGS},with_purego"
+          fi
+          TAGS="${TAGS},with_awg"
+          echo "BUILD_TAGS=${TAGS}" >> "${GITHUB_ENV}"
+
+      - name: Set shared ldflags
+        run: echo "LDFLAGS_SHARED=$(cat release/LDFLAGS)" >> "${GITHUB_ENV}"
+
+      - name: Set name
+        run: |
+          echo "OUTPUT_NAME=sing-box-${{ inputs.version }}-awg2.0-${{ matrix.name }}" >> "${GITHUB_ENV}"
+
+      - name: Build
+        run: |
+          set -xeuo pipefail
+          mkdir -p dist
+          EXT=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then EXT=".exe"; fi
+          go build -v -trimpath -o "dist/sing-box${EXT}" \
+            -tags "${BUILD_TAGS}" \
+            -ldflags "-s -w -buildid= ${LDFLAGS_SHARED} -X github.com/sagernet/sing-box/constant.Version=${{ inputs.version }}-awg2.0" \
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "0"
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          GOMIPS: ${{ matrix.gomips }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract libcronet
+        if: matrix.naive
+        run: |
+          set -xeuo pipefail
+          CRONET_GO_VERSION=$(cat .github/CRONET_GO_VERSION)
+          CGO_ENABLED=0 go run -v \
+            "github.com/sagernet/cronet-go/cmd/build-naive@${CRONET_GO_VERSION}" \
+            extract-lib --target ${{ matrix.goos }}/${{ matrix.goarch }} -o dist
+
+      - name: Archive
+        run: |
+          set -xeuo pipefail
+          cd dist
+          mkdir -p "${OUTPUT_NAME}"
+          cp ../LICENSE "${OUTPUT_NAME}/"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            cp sing-box.exe "${OUTPUT_NAME}/sing-box.exe"
+            if [ -f libcronet.dll ]; then
+              cp libcronet.dll "${OUTPUT_NAME}/"
+            fi
+            zip -r "${OUTPUT_NAME}.zip" "${OUTPUT_NAME}"
+          else
+            cp sing-box "${OUTPUT_NAME}/sing-box"
+            if [ -f libcronet.so ]; then
+              cp libcronet.so "${OUTPUT_NAME}/"
+            fi
+            tar -czvf "${OUTPUT_NAME}.tar.gz" "${OUTPUT_NAME}"
+          fi
+          rm -r "${OUTPUT_NAME}"
+
+      - name: Cleanup
+        run: |
+          EXT=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then EXT=".exe"; fi
+          rm -f "dist/sing-box${EXT}" dist/libcronet.so dist/libcronet.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: dist/
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -xeuo pipefail
+          VERSION="v${{ inputs.version }}-awg2.0"
+
+          # Delete existing release if exists
+          gh release delete "${VERSION}" --yes --repo ${{ github.repository }} 2>/dev/null || true
+
+          # Create release notes
+          cat > notes.md << 'EOF'
+          ## sing-box with AWG 2.0 support
+
+          ### AWG 2.0 Features:
+          - H1-H4 ranges support
+          - S3, S4 padding parameters
+          - I1-I5 obfuscation chains
+          - S4 keepalive padding fix (incoming keepalives handled correctly)
+          - Counter tag `<c>` obfuscation support
+
+          ### Platforms:
+          - linux-amd64
+          - entware-mipsel (softfloat)
+          - entware-aarch64
+          - windows-amd64
+          EOF
+
+          # Create release
+          PRERELEASE_FLAG=""
+          if [ "${{ inputs.prerelease }}" = "true" ]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+
+          gh release create "${VERSION}" \
+            --repo ${{ github.repository }} \
+            --title "${VERSION}" \
+            ${PRERELEASE_FLAG} \
+            --notes-file notes.md \
+            dist/*

@@ -2,7 +2,7 @@
 icon: material/alert-decagram
 ---
 
-#### 1.14.0-alpha.29
+#### 1.13.14
 
 * Fixes and improvements
 
@@ -54,7 +54,6 @@ The `control_http_client` field on
 [Tailscale](/configuration/endpoint/tailscale/) endpoints introduced in
 `1.14.0-alpha.13` is removed, and the deprecation of
 [Dial Fields](/configuration/endpoint/tailscale/#dial-fields) is reverted.
-
 #### 1.13.12
 
 * Update naiveproxy to v148.0.7778.96-1

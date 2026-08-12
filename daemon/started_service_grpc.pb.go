@@ -15,27 +15,37 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StartedService_StopService_FullMethodName            = "/daemon.StartedService/StopService"
-	StartedService_ReloadService_FullMethodName          = "/daemon.StartedService/ReloadService"
-	StartedService_SubscribeServiceStatus_FullMethodName = "/daemon.StartedService/SubscribeServiceStatus"
-	StartedService_SubscribeLog_FullMethodName           = "/daemon.StartedService/SubscribeLog"
-	StartedService_GetDefaultLogLevel_FullMethodName     = "/daemon.StartedService/GetDefaultLogLevel"
-	StartedService_ClearLogs_FullMethodName              = "/daemon.StartedService/ClearLogs"
-	StartedService_SubscribeStatus_FullMethodName        = "/daemon.StartedService/SubscribeStatus"
-	StartedService_SubscribeGroups_FullMethodName        = "/daemon.StartedService/SubscribeGroups"
-	StartedService_GetClashModeStatus_FullMethodName     = "/daemon.StartedService/GetClashModeStatus"
-	StartedService_SubscribeClashMode_FullMethodName     = "/daemon.StartedService/SubscribeClashMode"
-	StartedService_SetClashMode_FullMethodName           = "/daemon.StartedService/SetClashMode"
-	StartedService_URLTest_FullMethodName                = "/daemon.StartedService/URLTest"
-	StartedService_SelectOutbound_FullMethodName         = "/daemon.StartedService/SelectOutbound"
-	StartedService_SetGroupExpand_FullMethodName         = "/daemon.StartedService/SetGroupExpand"
-	StartedService_GetSystemProxyStatus_FullMethodName   = "/daemon.StartedService/GetSystemProxyStatus"
-	StartedService_SetSystemProxyEnabled_FullMethodName  = "/daemon.StartedService/SetSystemProxyEnabled"
-	StartedService_SubscribeConnections_FullMethodName   = "/daemon.StartedService/SubscribeConnections"
-	StartedService_CloseConnection_FullMethodName        = "/daemon.StartedService/CloseConnection"
-	StartedService_CloseAllConnections_FullMethodName    = "/daemon.StartedService/CloseAllConnections"
-	StartedService_GetDeprecatedWarnings_FullMethodName  = "/daemon.StartedService/GetDeprecatedWarnings"
-	StartedService_GetStartedAt_FullMethodName           = "/daemon.StartedService/GetStartedAt"
+	StartedService_StopService_FullMethodName              = "/daemon.StartedService/StopService"
+	StartedService_ReloadService_FullMethodName            = "/daemon.StartedService/ReloadService"
+	StartedService_SubscribeServiceStatus_FullMethodName   = "/daemon.StartedService/SubscribeServiceStatus"
+	StartedService_SubscribeLog_FullMethodName             = "/daemon.StartedService/SubscribeLog"
+	StartedService_GetDefaultLogLevel_FullMethodName       = "/daemon.StartedService/GetDefaultLogLevel"
+	StartedService_ClearLogs_FullMethodName                = "/daemon.StartedService/ClearLogs"
+	StartedService_SubscribeStatus_FullMethodName          = "/daemon.StartedService/SubscribeStatus"
+	StartedService_SubscribeGroups_FullMethodName          = "/daemon.StartedService/SubscribeGroups"
+	StartedService_GetClashModeStatus_FullMethodName       = "/daemon.StartedService/GetClashModeStatus"
+	StartedService_SubscribeClashMode_FullMethodName       = "/daemon.StartedService/SubscribeClashMode"
+	StartedService_SetClashMode_FullMethodName             = "/daemon.StartedService/SetClashMode"
+	StartedService_URLTest_FullMethodName                  = "/daemon.StartedService/URLTest"
+	StartedService_SelectOutbound_FullMethodName           = "/daemon.StartedService/SelectOutbound"
+	StartedService_SetGroupExpand_FullMethodName           = "/daemon.StartedService/SetGroupExpand"
+	StartedService_GetSystemProxyStatus_FullMethodName     = "/daemon.StartedService/GetSystemProxyStatus"
+	StartedService_SetSystemProxyEnabled_FullMethodName    = "/daemon.StartedService/SetSystemProxyEnabled"
+	StartedService_TriggerDebugCrash_FullMethodName        = "/daemon.StartedService/TriggerDebugCrash"
+	StartedService_TriggerOOMReport_FullMethodName         = "/daemon.StartedService/TriggerOOMReport"
+	StartedService_SubscribeConnections_FullMethodName     = "/daemon.StartedService/SubscribeConnections"
+	StartedService_CloseConnection_FullMethodName          = "/daemon.StartedService/CloseConnection"
+	StartedService_CloseAllConnections_FullMethodName      = "/daemon.StartedService/CloseAllConnections"
+	StartedService_GetDeprecatedWarnings_FullMethodName    = "/daemon.StartedService/GetDeprecatedWarnings"
+	StartedService_GetStartedAt_FullMethodName             = "/daemon.StartedService/GetStartedAt"
+	StartedService_SubscribeOutbounds_FullMethodName       = "/daemon.StartedService/SubscribeOutbounds"
+	StartedService_StartNetworkQualityTest_FullMethodName  = "/daemon.StartedService/StartNetworkQualityTest"
+	StartedService_StartSTUNTest_FullMethodName            = "/daemon.StartedService/StartSTUNTest"
+	StartedService_SubscribeTailscaleStatus_FullMethodName = "/daemon.StartedService/SubscribeTailscaleStatus"
+	StartedService_StartTailscalePing_FullMethodName       = "/daemon.StartedService/StartTailscalePing"
+	StartedService_SetTailscaleExitNode_FullMethodName     = "/daemon.StartedService/SetTailscaleExitNode"
+	StartedService_TailscaleLogout_FullMethodName          = "/daemon.StartedService/TailscaleLogout"
+	StartedService_StartTailscaleSSHSession_FullMethodName = "/daemon.StartedService/StartTailscaleSSHSession"
 )
 
 // StartedServiceClient is the client API for StartedService service.
@@ -58,11 +68,21 @@ type StartedServiceClient interface {
 	SetGroupExpand(ctx context.Context, in *SetGroupExpandRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetSystemProxyStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SystemProxyStatus, error)
 	SetSystemProxyEnabled(ctx context.Context, in *SetSystemProxyEnabledRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TriggerDebugCrash(ctx context.Context, in *DebugCrashRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TriggerOOMReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SubscribeConnections(ctx context.Context, in *SubscribeConnectionsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ConnectionEvents], error)
 	CloseConnection(ctx context.Context, in *CloseConnectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CloseAllConnections(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetDeprecatedWarnings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DeprecatedWarnings, error)
 	GetStartedAt(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StartedAt, error)
+	SubscribeOutbounds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[OutboundList], error)
+	StartNetworkQualityTest(ctx context.Context, in *NetworkQualityTestRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[NetworkQualityTestProgress], error)
+	StartSTUNTest(ctx context.Context, in *STUNTestRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[STUNTestProgress], error)
+	SubscribeTailscaleStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[TailscaleStatusUpdate], error)
+	StartTailscalePing(ctx context.Context, in *TailscalePingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[TailscalePingResponse], error)
+	SetTailscaleExitNode(ctx context.Context, in *SetTailscaleExitNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TailscaleLogout(ctx context.Context, in *TailscaleLogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	StartTailscaleSSHSession(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[TailscaleSSHClientMessage, TailscaleSSHServerMessage], error)
 }
 
 type startedServiceClient struct {
@@ -278,6 +298,26 @@ func (c *startedServiceClient) SetSystemProxyEnabled(ctx context.Context, in *Se
 	return out, nil
 }
 
+func (c *startedServiceClient) TriggerDebugCrash(ctx context.Context, in *DebugCrashRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StartedService_TriggerDebugCrash_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *startedServiceClient) TriggerOOMReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StartedService_TriggerOOMReport_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *startedServiceClient) SubscribeConnections(ctx context.Context, in *SubscribeConnectionsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ConnectionEvents], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &StartedService_ServiceDesc.Streams[5], StartedService_SubscribeConnections_FullMethodName, cOpts...)
@@ -337,6 +377,134 @@ func (c *startedServiceClient) GetStartedAt(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
+func (c *startedServiceClient) SubscribeOutbounds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[OutboundList], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &StartedService_ServiceDesc.Streams[6], StartedService_SubscribeOutbounds_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[emptypb.Empty, OutboundList]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_SubscribeOutboundsClient = grpc.ServerStreamingClient[OutboundList]
+
+func (c *startedServiceClient) StartNetworkQualityTest(ctx context.Context, in *NetworkQualityTestRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[NetworkQualityTestProgress], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &StartedService_ServiceDesc.Streams[7], StartedService_StartNetworkQualityTest_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[NetworkQualityTestRequest, NetworkQualityTestProgress]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartNetworkQualityTestClient = grpc.ServerStreamingClient[NetworkQualityTestProgress]
+
+func (c *startedServiceClient) StartSTUNTest(ctx context.Context, in *STUNTestRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[STUNTestProgress], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &StartedService_ServiceDesc.Streams[8], StartedService_StartSTUNTest_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[STUNTestRequest, STUNTestProgress]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartSTUNTestClient = grpc.ServerStreamingClient[STUNTestProgress]
+
+func (c *startedServiceClient) SubscribeTailscaleStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[TailscaleStatusUpdate], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &StartedService_ServiceDesc.Streams[9], StartedService_SubscribeTailscaleStatus_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[emptypb.Empty, TailscaleStatusUpdate]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_SubscribeTailscaleStatusClient = grpc.ServerStreamingClient[TailscaleStatusUpdate]
+
+func (c *startedServiceClient) StartTailscalePing(ctx context.Context, in *TailscalePingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[TailscalePingResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &StartedService_ServiceDesc.Streams[10], StartedService_StartTailscalePing_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[TailscalePingRequest, TailscalePingResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartTailscalePingClient = grpc.ServerStreamingClient[TailscalePingResponse]
+
+func (c *startedServiceClient) SetTailscaleExitNode(ctx context.Context, in *SetTailscaleExitNodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StartedService_SetTailscaleExitNode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *startedServiceClient) TailscaleLogout(ctx context.Context, in *TailscaleLogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StartedService_TailscaleLogout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *startedServiceClient) StartTailscaleSSHSession(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[TailscaleSSHClientMessage, TailscaleSSHServerMessage], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &StartedService_ServiceDesc.Streams[11], StartedService_StartTailscaleSSHSession_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[TailscaleSSHClientMessage, TailscaleSSHServerMessage]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartTailscaleSSHSessionClient = grpc.BidiStreamingClient[TailscaleSSHClientMessage, TailscaleSSHServerMessage]
+
 // StartedServiceServer is the server API for StartedService service.
 // All implementations must embed UnimplementedStartedServiceServer
 // for forward compatibility.
@@ -357,11 +525,21 @@ type StartedServiceServer interface {
 	SetGroupExpand(context.Context, *SetGroupExpandRequest) (*emptypb.Empty, error)
 	GetSystemProxyStatus(context.Context, *emptypb.Empty) (*SystemProxyStatus, error)
 	SetSystemProxyEnabled(context.Context, *SetSystemProxyEnabledRequest) (*emptypb.Empty, error)
+	TriggerDebugCrash(context.Context, *DebugCrashRequest) (*emptypb.Empty, error)
+	TriggerOOMReport(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	SubscribeConnections(*SubscribeConnectionsRequest, grpc.ServerStreamingServer[ConnectionEvents]) error
 	CloseConnection(context.Context, *CloseConnectionRequest) (*emptypb.Empty, error)
 	CloseAllConnections(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	GetDeprecatedWarnings(context.Context, *emptypb.Empty) (*DeprecatedWarnings, error)
 	GetStartedAt(context.Context, *emptypb.Empty) (*StartedAt, error)
+	SubscribeOutbounds(*emptypb.Empty, grpc.ServerStreamingServer[OutboundList]) error
+	StartNetworkQualityTest(*NetworkQualityTestRequest, grpc.ServerStreamingServer[NetworkQualityTestProgress]) error
+	StartSTUNTest(*STUNTestRequest, grpc.ServerStreamingServer[STUNTestProgress]) error
+	SubscribeTailscaleStatus(*emptypb.Empty, grpc.ServerStreamingServer[TailscaleStatusUpdate]) error
+	StartTailscalePing(*TailscalePingRequest, grpc.ServerStreamingServer[TailscalePingResponse]) error
+	SetTailscaleExitNode(context.Context, *SetTailscaleExitNodeRequest) (*emptypb.Empty, error)
+	TailscaleLogout(context.Context, *TailscaleLogoutRequest) (*emptypb.Empty, error)
+	StartTailscaleSSHSession(grpc.BidiStreamingServer[TailscaleSSHClientMessage, TailscaleSSHServerMessage]) error
 	mustEmbedUnimplementedStartedServiceServer()
 }
 
@@ -436,6 +614,14 @@ func (UnimplementedStartedServiceServer) SetSystemProxyEnabled(context.Context, 
 	return nil, status.Error(codes.Unimplemented, "method SetSystemProxyEnabled not implemented")
 }
 
+func (UnimplementedStartedServiceServer) TriggerDebugCrash(context.Context, *DebugCrashRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method TriggerDebugCrash not implemented")
+}
+
+func (UnimplementedStartedServiceServer) TriggerOOMReport(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method TriggerOOMReport not implemented")
+}
+
 func (UnimplementedStartedServiceServer) SubscribeConnections(*SubscribeConnectionsRequest, grpc.ServerStreamingServer[ConnectionEvents]) error {
 	return status.Error(codes.Unimplemented, "method SubscribeConnections not implemented")
 }
@@ -454,6 +640,38 @@ func (UnimplementedStartedServiceServer) GetDeprecatedWarnings(context.Context, 
 
 func (UnimplementedStartedServiceServer) GetStartedAt(context.Context, *emptypb.Empty) (*StartedAt, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetStartedAt not implemented")
+}
+
+func (UnimplementedStartedServiceServer) SubscribeOutbounds(*emptypb.Empty, grpc.ServerStreamingServer[OutboundList]) error {
+	return status.Error(codes.Unimplemented, "method SubscribeOutbounds not implemented")
+}
+
+func (UnimplementedStartedServiceServer) StartNetworkQualityTest(*NetworkQualityTestRequest, grpc.ServerStreamingServer[NetworkQualityTestProgress]) error {
+	return status.Error(codes.Unimplemented, "method StartNetworkQualityTest not implemented")
+}
+
+func (UnimplementedStartedServiceServer) StartSTUNTest(*STUNTestRequest, grpc.ServerStreamingServer[STUNTestProgress]) error {
+	return status.Error(codes.Unimplemented, "method StartSTUNTest not implemented")
+}
+
+func (UnimplementedStartedServiceServer) SubscribeTailscaleStatus(*emptypb.Empty, grpc.ServerStreamingServer[TailscaleStatusUpdate]) error {
+	return status.Error(codes.Unimplemented, "method SubscribeTailscaleStatus not implemented")
+}
+
+func (UnimplementedStartedServiceServer) StartTailscalePing(*TailscalePingRequest, grpc.ServerStreamingServer[TailscalePingResponse]) error {
+	return status.Error(codes.Unimplemented, "method StartTailscalePing not implemented")
+}
+
+func (UnimplementedStartedServiceServer) SetTailscaleExitNode(context.Context, *SetTailscaleExitNodeRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetTailscaleExitNode not implemented")
+}
+
+func (UnimplementedStartedServiceServer) TailscaleLogout(context.Context, *TailscaleLogoutRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method TailscaleLogout not implemented")
+}
+
+func (UnimplementedStartedServiceServer) StartTailscaleSSHSession(grpc.BidiStreamingServer[TailscaleSSHClientMessage, TailscaleSSHServerMessage]) error {
+	return status.Error(codes.Unimplemented, "method StartTailscaleSSHSession not implemented")
 }
 func (UnimplementedStartedServiceServer) mustEmbedUnimplementedStartedServiceServer() {}
 func (UnimplementedStartedServiceServer) testEmbeddedByValue()                        {}
@@ -729,6 +947,42 @@ func _StartedService_SetSystemProxyEnabled_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StartedService_TriggerDebugCrash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DebugCrashRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StartedServiceServer).TriggerDebugCrash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StartedService_TriggerDebugCrash_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StartedServiceServer).TriggerDebugCrash(ctx, req.(*DebugCrashRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StartedService_TriggerOOMReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StartedServiceServer).TriggerOOMReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StartedService_TriggerOOMReport_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StartedServiceServer).TriggerOOMReport(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _StartedService_SubscribeConnections_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(SubscribeConnectionsRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -812,6 +1066,104 @@ func _StartedService_GetStartedAt_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StartedService_SubscribeOutbounds_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StartedServiceServer).SubscribeOutbounds(m, &grpc.GenericServerStream[emptypb.Empty, OutboundList]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_SubscribeOutboundsServer = grpc.ServerStreamingServer[OutboundList]
+
+func _StartedService_StartNetworkQualityTest_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(NetworkQualityTestRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StartedServiceServer).StartNetworkQualityTest(m, &grpc.GenericServerStream[NetworkQualityTestRequest, NetworkQualityTestProgress]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartNetworkQualityTestServer = grpc.ServerStreamingServer[NetworkQualityTestProgress]
+
+func _StartedService_StartSTUNTest_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(STUNTestRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StartedServiceServer).StartSTUNTest(m, &grpc.GenericServerStream[STUNTestRequest, STUNTestProgress]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartSTUNTestServer = grpc.ServerStreamingServer[STUNTestProgress]
+
+func _StartedService_SubscribeTailscaleStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StartedServiceServer).SubscribeTailscaleStatus(m, &grpc.GenericServerStream[emptypb.Empty, TailscaleStatusUpdate]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_SubscribeTailscaleStatusServer = grpc.ServerStreamingServer[TailscaleStatusUpdate]
+
+func _StartedService_StartTailscalePing_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(TailscalePingRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StartedServiceServer).StartTailscalePing(m, &grpc.GenericServerStream[TailscalePingRequest, TailscalePingResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartTailscalePingServer = grpc.ServerStreamingServer[TailscalePingResponse]
+
+func _StartedService_SetTailscaleExitNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetTailscaleExitNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StartedServiceServer).SetTailscaleExitNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StartedService_SetTailscaleExitNode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StartedServiceServer).SetTailscaleExitNode(ctx, req.(*SetTailscaleExitNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StartedService_TailscaleLogout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TailscaleLogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StartedServiceServer).TailscaleLogout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StartedService_TailscaleLogout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StartedServiceServer).TailscaleLogout(ctx, req.(*TailscaleLogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StartedService_StartTailscaleSSHSession_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StartedServiceServer).StartTailscaleSSHSession(&grpc.GenericServerStream[TailscaleSSHClientMessage, TailscaleSSHServerMessage]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type StartedService_StartTailscaleSSHSessionServer = grpc.BidiStreamingServer[TailscaleSSHClientMessage, TailscaleSSHServerMessage]
+
 // StartedService_ServiceDesc is the grpc.ServiceDesc for StartedService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -864,6 +1216,14 @@ var StartedService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _StartedService_SetSystemProxyEnabled_Handler,
 		},
 		{
+			MethodName: "TriggerDebugCrash",
+			Handler:    _StartedService_TriggerDebugCrash_Handler,
+		},
+		{
+			MethodName: "TriggerOOMReport",
+			Handler:    _StartedService_TriggerOOMReport_Handler,
+		},
+		{
 			MethodName: "CloseConnection",
 			Handler:    _StartedService_CloseConnection_Handler,
 		},
@@ -878,6 +1238,14 @@ var StartedService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStartedAt",
 			Handler:    _StartedService_GetStartedAt_Handler,
+		},
+		{
+			MethodName: "SetTailscaleExitNode",
+			Handler:    _StartedService_SetTailscaleExitNode_Handler,
+		},
+		{
+			MethodName: "TailscaleLogout",
+			Handler:    _StartedService_TailscaleLogout_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
@@ -910,6 +1278,37 @@ var StartedService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "SubscribeConnections",
 			Handler:       _StartedService_SubscribeConnections_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "SubscribeOutbounds",
+			Handler:       _StartedService_SubscribeOutbounds_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "StartNetworkQualityTest",
+			Handler:       _StartedService_StartNetworkQualityTest_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "StartSTUNTest",
+			Handler:       _StartedService_StartSTUNTest_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "SubscribeTailscaleStatus",
+			Handler:       _StartedService_SubscribeTailscaleStatus_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "StartTailscalePing",
+			Handler:       _StartedService_StartTailscalePing_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "StartTailscaleSSHSession",
+			Handler:       _StartedService_StartTailscaleSSHSession_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "daemon/started_service.proto",

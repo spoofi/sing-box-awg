@@ -39,7 +39,9 @@ type CommandServerHandler interface {
 	ServiceReload() error
 	GetSystemProxyStatus() (*SystemProxyStatus, error)
 	SetSystemProxyEnabled(enabled bool) error
+	TriggerNativeCrash() error
 	WriteDebugMessage(message string)
+	ConnectSSHAgent() (int32, error)
 }
 
 func NewCommandServer(handler CommandServerHandler, platformInterface PlatformInterface) (*CommandServer, error) {
@@ -57,10 +59,12 @@ func NewCommandServer(handler CommandServerHandler, platformInterface PlatformIn
 	server.StartedService = daemon.NewStartedService(daemon.ServiceOptions{
 		Context: ctx,
 		// Platform:         platformWrapper,
-		Handler:     (*platformHandler)(server),
-		Debug:       sDebug,
-		LogMaxLines: sLogMaxLines,
-		OOMKiller:   memoryLimitEnabled,
+		Handler:           (*platformHandler)(server),
+		Debug:             sDebug,
+		LogMaxLines:       sLogMaxLines,
+		OOMKillerEnabled:  sOOMKillerEnabled,
+		OOMKillerDisabled: sOOMKillerDisabled,
+		OOMMemoryLimit:    uint64(sOOMMemoryLimit),
 		// WorkingDirectory: sWorkingPath,
 		// TempDirectory:    sTempPath,
 		// UserID:           sUserID,
@@ -170,11 +174,16 @@ type OverrideOptions struct {
 }
 
 func (s *CommandServer) StartOrReloadService(configContent string, options *OverrideOptions) error {
-	return s.StartedService.StartOrReloadService(configContent, &daemon.OverrideOptions{
+	saveConfigSnapshot(configContent)
+	err := s.StartedService.StartOrReloadService(configContent, &daemon.OverrideOptions{
 		AutoRedirect:   options.AutoRedirect,
 		IncludePackage: iteratorToArray(options.IncludePackage),
 		ExcludePackage: iteratorToArray(options.ExcludePackage),
 	})
+	if err != nil {
+		return E.Cause(err, "start or reload service")
+	}
+	return nil
 }
 
 func (s *CommandServer) CloseService() error {
@@ -235,7 +244,7 @@ func (s *CommandServer) ResetNetwork() {
 	if instance == nil || instance.Box() == nil {
 		return
 	}
-	instance.Box().Router().ResetNetwork()
+	instance.Box().Network().ResetNetwork()
 }
 
 func (s *CommandServer) UpdateWIFIState() {
@@ -259,7 +268,7 @@ func (h *platformHandler) ServiceReload() error {
 func (h *platformHandler) SystemProxyStatus() (*daemon.SystemProxyStatus, error) {
 	status, err := (*CommandServer)(h).handler.GetSystemProxyStatus()
 	if err != nil {
-		return nil, err
+		return nil, E.Cause(err, "get system proxy status")
 	}
 	return &daemon.SystemProxyStatus{
 		Enabled:   status.Enabled,
@@ -271,6 +280,14 @@ func (h *platformHandler) SetSystemProxyEnabled(enabled bool) error {
 	return (*CommandServer)(h).handler.SetSystemProxyEnabled(enabled)
 }
 
+func (h *platformHandler) TriggerNativeCrash() error {
+	return (*CommandServer)(h).handler.TriggerNativeCrash()
+}
+
 func (h *platformHandler) WriteDebugMessage(message string) {
 	(*CommandServer)(h).handler.WriteDebugMessage(message)
+}
+
+func (h *platformHandler) ConnectSSHAgent() (int32, error) {
+	return (*CommandServer)(h).handler.ConnectSSHAgent()
 }

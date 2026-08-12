@@ -122,8 +122,10 @@ type LocalRuleSet struct {
 
 type RemoteRuleSet struct {
 	URL            string             `json:"url"`
-	DownloadDetour string             `json:"download_detour,omitempty"`
+	HTTPClient     *HTTPClientOptions `json:"http_client,omitempty"`
 	UpdateInterval badoption.Duration `json:"update_interval,omitempty"`
+	// Deprecated: use http_client instead
+	DownloadDetour string `json:"download_detour,omitempty"`
 }
 
 type _HeadlessRule struct {
@@ -198,6 +200,7 @@ type DefaultHeadlessRule struct {
 	ProcessPath             badoption.Listable[string]                                                  `json:"process_path,omitempty"`
 	ProcessPathRegex        badoption.Listable[string]                                                  `json:"process_path_regex,omitempty"`
 	PackageName             badoption.Listable[string]                                                  `json:"package_name,omitempty"`
+	PackageNameRegex        badoption.Listable[string]                                                  `json:"package_name_regex,omitempty"`
 	NetworkType             badoption.Listable[InterfaceType]                                           `json:"network_type,omitempty"`
 	NetworkIsExpensive      bool                                                                        `json:"network_is_expensive,omitempty"`
 	NetworkIsConstrained    bool                                                                        `json:"network_is_constrained,omitempty"`
@@ -243,7 +246,7 @@ type PlainRuleSetCompat _PlainRuleSetCompat
 func (r PlainRuleSetCompat) MarshalJSON() ([]byte, error) {
 	var v any
 	switch r.Version {
-	case C.RuleSetVersion1, C.RuleSetVersion2, C.RuleSetVersion3, C.RuleSetVersion4:
+	case C.RuleSetVersion1, C.RuleSetVersion2, C.RuleSetVersion3, C.RuleSetVersion4, C.RuleSetVersion5:
 		v = r.Options
 	default:
 		return nil, E.New("unknown rule-set version: ", r.Version)
@@ -258,7 +261,7 @@ func (r *PlainRuleSetCompat) UnmarshalJSON(bytes []byte) error {
 	}
 	var v any
 	switch r.Version {
-	case C.RuleSetVersion1, C.RuleSetVersion2, C.RuleSetVersion3, C.RuleSetVersion4:
+	case C.RuleSetVersion1, C.RuleSetVersion2, C.RuleSetVersion3, C.RuleSetVersion4, C.RuleSetVersion5:
 		v = &r.Options
 	case 0:
 		return E.New("missing rule-set version")
@@ -275,7 +278,7 @@ func (r *PlainRuleSetCompat) UnmarshalJSON(bytes []byte) error {
 
 func (r PlainRuleSetCompat) Upgrade() (PlainRuleSet, error) {
 	switch r.Version {
-	case C.RuleSetVersion1, C.RuleSetVersion2, C.RuleSetVersion3, C.RuleSetVersion4:
+	case C.RuleSetVersion1, C.RuleSetVersion2, C.RuleSetVersion3, C.RuleSetVersion4, C.RuleSetVersion5:
 	default:
 		return PlainRuleSet{}, E.New("unknown rule-set version: " + F.ToString(r.Version))
 	}
